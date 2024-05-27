@@ -44,6 +44,7 @@
         let currentPlayer = 'X';
         let cells = Array.from({ length: 9 }).map(() => null);
         let gameOver = false;
+        let isPlayerTurn = true; // Aggiunta variabile per gestire il turno del giocatore
         let playerWins = sessionStorage.getItem('playerWins') || 0;
         let computerWins = sessionStorage.getItem('computerWins') || 0;
         let draws = sessionStorage.getItem('draws') || 0;
@@ -98,6 +99,9 @@
                     sessionStorage.setItem('draws', draws);
                 }
                 updateScore();
+                // Resetta lo stato del gioco e riabilita il turno del giocatore
+                gameOver = false;
+                isPlayerTurn = true;
                 resetGame();
             }, 100);
         }
@@ -105,7 +109,6 @@
         function resetGame() {
             board.innerHTML = '';
             cells = Array.from({ length: 9 }).map(() => null);
-            gameOver = false;
             render();
         }
 
@@ -140,7 +143,8 @@
         }
 
         function handleClick(index) {
-            if (!gameOver && cells[index] === null) {
+            if (!gameOver && isPlayerTurn && cells[index] === null) {
+                isPlayerTurn = false; // Disabilita temporaneamente il turno del giocatore
                 cells[index] = currentPlayer;
                 render();
                 const winner = checkWinner(cells);
@@ -164,6 +168,7 @@
                             endGame(computerWinner);
                             return;
                         }
+                        isPlayerTurn = true; // Riabilita il turno del giocatore
                     }, 500);
                 }
             }
