@@ -6,24 +6,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tris</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto; /* Aggiunto per centrare il contenuto */
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center; /* Aggiunto per centrare il contenuto */
+        }
+
         .board {
             display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 2px;
-            margin: 0 auto;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 6px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 6px;
         }
 
         .cell {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background: #eee;
-            border: 1px solid #333;
+            border: 1px solid #ccc;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 2em;
             cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+
+        .cell.X {
+            color: #FF6347;
+        }
+
+        .cell.O {
+            color: #4169E1;
+        }
+
+        .score {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .score p {
+            margin: 5px 0;
+        }
+
+        #playerTurnMessage {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .center{
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
@@ -32,11 +104,15 @@
     <header>
         <button onclick="window.location.href='locale.html'">Gioca in locale</button>
     </header>
-    <div class="board" id="board"></div>
-    <div>
-        <p>Vittorie Giocatore: <span id="playerWins">0</span></p>
-        <p>Vittorie Computer: <span id="computerWins">0</span></p>
-        <p>Pareggi: <span id="draws">0</span></p>
+    <div class="container">
+        <div class="center">
+            <div class="board" id="board"></div>
+        </div>
+        <div class="score">
+            <p>Vittorie Giocatore: <span id="playerWins">0</span></p>
+            <p>Vittorie Computer: <span id="computerWins">0</span></p>
+            <p>Pareggi: <span id="draws">0</span></p>
+        </div>
     </div>
     <script>
         const board = document.getElementById('board');
