@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tris</title>
+    <title>Tris - Gioca in Locale</title>
     <style>
         .board {
             display: grid;
@@ -30,31 +30,33 @@
 
 <body>
     <header>
-        <button onclick="window.location.href='locale.html'">Gioca in locale</button>
+        <button onclick="window.location.href='index.html'">Gioca contro il computer</button>
     </header>
+    <div><p id="playerTurnMessage">Tocca al giocatore X</p></div>
     <div class="board" id="board"></div>
     <div>
-        <p>Vittorie Giocatore: <span id="playerWins">0</span></p>
-        <p>Vittorie Computer: <span id="computerWins">0</span></p>
+        <p>Vittorie Giocatore 1: <span id="player1Wins">0</span></p>
+        <p>Vittorie Giocatore 2: <span id="player2Wins">0</span></p>
         <p>Pareggi: <span id="draws">0</span></p>
     </div>
+
     <script>
         const board = document.getElementById('board');
-        const playerWinsElement = document.getElementById('playerWins');
-        const computerWinsElement = document.getElementById('computerWins');
+        const player1WinsElement = document.getElementById('player1Wins');
+        const player2WinsElement = document.getElementById('player2Wins');
         const drawsElement = document.getElementById('draws');
+        const playerTurnMessage = document.getElementById('playerTurnMessage');
 
         let currentPlayer = 'X';
         let cells = Array.from({ length: 9 }).map(() => null);
         let gameOver = false;
-        let isPlayerTurn = true; // Aggiunta variabile per gestire il turno del giocatore
-        let playerWins = sessionStorage.getItem('playerWins') || 0;
-        let computerWins = sessionStorage.getItem('computerWins') || 0;
+        let player1Wins = sessionStorage.getItem('player1Wins') || 0;
+        let player2Wins = sessionStorage.getItem('player2Wins') || 0;
         let draws = sessionStorage.getItem('draws') || 0;
 
         function updateScore() {
-            playerWinsElement.textContent = playerWins;
-            computerWinsElement.textContent = computerWins;
+            player1WinsElement.textContent = player1Wins;
+            player2WinsElement.textContent = player2Wins;
             drawsElement.textContent = draws;
         }
 
@@ -85,26 +87,20 @@
             gameOver = true;
             setTimeout(() => {
                 if (winner === 'X') {
-                    alert("Complimenti! Hai vinto!");
+                    alert("Giocatore 1 ha vinto!");
+                    player1Wins++;
+                    sessionStorage.setItem('player1Wins', player1Wins);
                 } else if (winner === 'O') {
-                    alert("La CPU ha vinto. Ritenta!");
+                    alert("Giocatore 2 ha vinto!");
+                    player2Wins++;
+                    sessionStorage.setItem('player2Wins', player2Wins);
                 } else {
-                    alert("È stato un bel pareggio!");
-                }
-                if (winner === 'X') {
-                    playerWins++;
-                    sessionStorage.setItem('playerWins', playerWins);
-                } else if (winner === 'O') {
-                    computerWins++;
-                    sessionStorage.setItem('computerWins', computerWins);
-                } else {
+                    alert("Pareggio!");
                     draws++;
                     sessionStorage.setItem('draws', draws);
                 }
                 updateScore();
-                // Resetta lo stato del gioco e riabilita il turno del giocatore
                 gameOver = false;
-                isPlayerTurn = true;
                 resetGame();
             }, 100);
         }
@@ -115,39 +111,8 @@
             render();
         }
 
-        function getAvailableMoves() {
-            return cells.map((cell, index) => cell === null ? index : -1).filter(index => index !== -1);
-        }
-
-        function makeComputerMove() {
-            const availableMoves = getAvailableMoves();
-            // Check if computer can win in the next move
-            for (let move of availableMoves) {
-                cells[move] = 'O';
-                if (checkWinner(cells) === 'O') {
-                    cells[move] = null;
-                    return move;
-                }
-                cells[move] = null;
-            }
-            // Check if player can win in the next move and block it
-            for (let move of availableMoves) {
-                cells[move] = 'X';
-                if (checkWinner(cells) === 'X') {
-                    cells[move] = 'O';
-                    return move;
-                }
-                cells[move] = null;
-            }
-            // If no winning moves, play in the center if available
-            if (cells[4] === null) return 4;
-            // If center is not available, play a random move
-            return availableMoves[Math.floor(Math.random() * availableMoves.length)];
-        }
-
         function handleClick(index) {
-            if (!gameOver && isPlayerTurn && cells[index] === null) {
-                isPlayerTurn = false; // Disabilita temporaneamente il turno del giocatore
+            if (!gameOver && cells[index] === null) {
                 cells[index] = currentPlayer;
                 render();
                 const winner = checkWinner(cells);
@@ -160,20 +125,7 @@
                     return;
                 }
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                if (currentPlayer === 'O') {
-                    setTimeout(() => {
-                        const computerMove = makeComputerMove();
-                        cells[computerMove] = currentPlayer;
-                        render();
-                        currentPlayer = 'X';
-                        const computerWinner = checkWinner(cells);
-                        if (computerWinner) {
-                            endGame(computerWinner);
-                            return;
-                        }
-                        isPlayerTurn = true; // Riabilita il turno del giocatore
-                    }, 500);
-                }
+                playerTurnMessage.textContent = `Tocca al giocatore ${currentPlayer}`;
             }
         }
 
@@ -191,4 +143,5 @@
         render();
     </script>
 </body>
+
 </html>
